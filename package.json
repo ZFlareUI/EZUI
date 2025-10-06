@@ -1,6 +1,6 @@
 {
   "name": "@ezui/framework",
-  "version": "2.0.0",
+  "version": "0.0.1",
   "description": "Enterprise-grade reactive web framework with advanced state management, security, performance optimization, and comprehensive development tools",
   "main": "dist/ezui.min.js",
   "module": "src/ezui.js",
