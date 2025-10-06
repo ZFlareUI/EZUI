@@ -54,7 +54,7 @@
   "author": {
     "name": "EZUI Development Team",
     "email": "team@ezui.dev",
-    "url": "https://ezui.dev/team"
+    "url": "https://github.com/ZFlareUI/EZUI"
   },
   "contributors": [
     {
@@ -65,10 +65,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ezui-framework/core.git"
+    "url": "https://github.com/ZFlareUI/EZUI"
   },
   "bugs": {
-    "url": "https://github.com/ezui-framework/core/issues"
+    "url": "https://github.com/ZFlareUI/EZUI"
   },
   "homepage": "https://ezui.dev",
   "documentation": "https://docs.ezui.dev",
