@@ -1,175 +1,803 @@
-<component FormExample.ezu>
+<component ContactForm.ezu>
 
 style {
   .form-container {
-    max-width: 500px
-    margin: 20px auto
-    padding: 25px
-    background: white
-    border-radius: 12px
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 32px;
+    background: var(--bg-primary, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color, #e5e7eb);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
-  h2 {
-    color: #2c3e50
-    margin-bottom: 20px
-    text-align: center
+  .form-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .form-title {
+    color: var(--text-primary, #111827);
+    margin: 0 0 8px;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .form-subtitle {
+    color: var(--text-secondary, #6b7280);
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
   }
 
   .form-group {
-    margin-bottom: 20px
+    margin-bottom: 24px;
+    flex: 1;
   }
 
-  label {
-    display: block
-    font-weight: bold
-    margin-bottom: 8px
-    color: #34495e
+  .form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary, #374151);
+    font-size: 14px;
   }
 
-  input, textarea, select {
-    width: 100%
-    padding: 12px
-    border: 2px solid #ddd
-    border-radius: 6px
-    font-size: 16px
-    transition: border-color 0.3s
+  .required {
+    color: var(--danger-color, #ef4444);
   }
 
-  input:focus, textarea:focus, select:focus {
-    outline: none
-    border-color: #3498db
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.2s;
+    background: var(--bg-primary, #ffffff);
+    color: var(--text-primary, #111827);
   }
 
-  .error {
-    color: #e74c3c
-    font-size: 14px
-    margin-top: 5px
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--accent-color, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .form-input.error, .form-textarea.error, .form-select.error {
+    border-color: var(--danger-color, #ef4444);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .error-message {
+    color: var(--danger-color, #ef4444);
+    font-size: 14px;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .character-count {
+    font-size: 12px;
+    color: var(--text-tertiary, #9ca3af);
+    text-align: right;
+    margin-top: 4px;
   }
 
   .submit-btn {
-    background: #27ae60
-    color: white
-    border: none
-    padding: 15px 30px
-    border-radius: 6px
-    font-size: 16px
-    cursor: pointer
-    width: 100%
-    transition: background-color 0.3s
+    background: linear-gradient(135deg, var(--accent-color, #3b82f6), var(--accent-dark, #2563eb));
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 
-  .submit-btn:hover {
-    background: #229954
+  .submit-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
   }
 
   .submit-btn:disabled {
-    background: #bdc3c7
-    cursor: not-allowed
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
   }
 
-  .success {
-    background: #d4edda
-    color: #155724
-    padding: 15px
-    border-radius: 6px
-    margin-bottom: 20px
-    text-align: center
+  .loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .success-message {
+    background: var(--success-bg, #dcfce7);
+    color: var(--success-color, #16a34a);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    text-align: center;
+    border: 1px solid var(--success-color, #16a34a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+  }
+
+  .privacy-notice {
+    background: var(--info-bg, #eff6ff);
+    border: 1px solid var(--info-color, #3b82f6);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: var(--info-dark, #1e40af);
+  }
+
+  .form-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--text-secondary, #6b7280);
+  }
+
+  .form-footer a {
+    color: var(--accent-color, #3b82f6);
+    text-decoration: none;
+  }
+
+  .form-footer a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .form-container {
+      margin: 16px;
+      padding: 24px;
+    }
+    
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+    }
+    
+    .form-title {
+      font-size: 24px;
+    }
   }
 }
 
 state {
   formData: {
-    name: ""
-    email: ""
-    age: 18
-    message: ""
-    country: "us"
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    company: "",
+    subject: "",
+    message: "",
+    priority: "medium",
+    contactMethod: "email",
+    consentGiven: false
+  },
+  
+  errors: {},
+  isSubmitting: false,
+  isSubmitted: false,
+  submissionId: null,
+  
+  // Form configuration
+  maxMessageLength: 1000,
+  requiredFields: ['firstName', 'lastName', 'email', 'subject', 'message', 'consentGiven'],
+  
+  // Validation rules
+  validationRules: {
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    phone: /^[\+]?[\d\s\-\(\)]{10,}$/,
+    minMessageLength: 10
   }
-  errors: {}
-  isSubmitting: false
-  isSubmitted: false
 }
 
 template {
   <div class="form-container">
-    <h2>Contact Form</h2>
+    <header class="form-header">
+      <h1 class="form-title">Get In Touch</h1>
+      <p class="form-subtitle">
+        Ready to start your next project or have questions about our services? 
+        We'd love to hear from you. Send us a message and we'll respond within 24 hours.
+      </p>
+    </header>
     
-    {isSubmitted ? '<div class="success">Form submitted successfully!</div>' : ''}
+    {isSubmitted ? 
+      '<div class="success-message">' +
+        '✅ Thank you! Your message has been sent successfully.' +
+        (submissionId ? '<br><small>Reference ID: ' + submissionId + '</small>' : '') +
+      '</div>' : 
+      
+      '<div>' +
+        '<div class="privacy-notice">' +
+          '🔒 <strong>Privacy Notice:</strong> Your information is secure and will only be used to respond to your inquiry. ' +
+          'We do not share your data with third parties. ' +
+          '<a href="/privacy" target="_blank">Read our Privacy Policy</a>' +
+        '</div>' +
+        
+        '<form onsubmit="handleSubmit(event)">' +
+          '<div class="form-row">' +
+            '<div class="form-group">' +
+              '<label for="firstName" class="form-label">First Name <span class="required">*</span></label>' +
+              '<input ' +
+                'type="text" ' +
+                'id="firstName" ' +
+                'class="form-input ' + (errors.firstName ? 'error' : '') + '" ' +
+                'value="' + formData.firstName + '" ' +
+                'oninput="updateField(\'firstName\', event.target.value)" ' +
+                'placeholder="Your first name" ' +
+                'required ' +
+                'autocomplete="given-name" ' +
+              '/>' +
+              (errors.firstName ? '<div class="error-message">⚠️ ' + errors.firstName + '</div>' : '') +
+            '</div>' +
+            
+            '<div class="form-group">' +
+              '<label for="lastName" class="form-label">Last Name <span class="required">*</span></label>' +
+              '<input ' +
+                'type="text" ' +
+                'id="lastName" ' +
+                'class="form-input ' + (errors.lastName ? 'error' : '') + '" ' +
+                'value="' + formData.lastName + '" ' +
+                'oninput="updateField(\'lastName\', event.target.value)" ' +
+                'placeholder="Your last name" ' +
+                'required ' +
+                'autocomplete="family-name" ' +
+              '/>' +
+              (errors.lastName ? '<div class="error-message">⚠️ ' + errors.lastName + '</div>' : '') +
+            '</div>' +
+          '</div>' +
+          
+          '<div class="form-row">' +
+            '<div class="form-group">' +
+              '<label for="email" class="form-label">Email Address <span class="required">*</span></label>' +
+              '<input ' +
+                'type="email" ' +
+                'id="email" ' +
+                'class="form-input ' + (errors.email ? 'error' : '') + '" ' +
+                'value="' + formData.email + '" ' +
+                'oninput="updateField(\'email\', event.target.value)" ' +
+                'placeholder="your.email@company.com" ' +
+                'required ' +
+                'autocomplete="email" ' +
+              '/>' +
+              (errors.email ? '<div class="error-message">⚠️ ' + errors.email + '</div>' : '') +
+            '</div>' +
+            
+            '<div class="form-group">' +
+              '<label for="phone" class="form-label">Phone Number</label>' +
+              '<input ' +
+                'type="tel" ' +
+                'id="phone" ' +
+                'class="form-input ' + (errors.phone ? 'error' : '') + '" ' +
+                'value="' + formData.phone + '" ' +
+                'oninput="updateField(\'phone\', event.target.value)" ' +
+                'placeholder="+1 (555) 123-4567" ' +
+                'autocomplete="tel" ' +
+              '/>' +
+              (errors.phone ? '<div class="error-message">⚠️ ' + errors.phone + '</div>' : '') +
+            '</div>' +
+          '</div>' +
+          
+          '<div class="form-group">' +
+            '<label for="company" class="form-label">Company/Organization</label>' +
+            '<input ' +
+              'type="text" ' +
+              'id="company" ' +
+              'class="form-input" ' +
+              'value="' + formData.company + '" ' +
+              'oninput="updateField(\'company\', event.target.value)" ' +
+              'placeholder="Your company name" ' +
+              'autocomplete="organization" ' +
+            '/>' +
+          '</div>' +
+          
+          '<div class="form-row">' +
+            '<div class="form-group">' +
+              '<label for="subject" class="form-label">Subject <span class="required">*</span></label>' +
+              '<input ' +
+                'type="text" ' +
+                'id="subject" ' +
+                'class="form-input ' + (errors.subject ? 'error' : '') + '" ' +
+                'value="' + formData.subject + '" ' +
+                'oninput="updateField(\'subject\', event.target.value)" ' +
+                'placeholder="Brief description of your inquiry" ' +
+                'required ' +
+              '/>' +
+              (errors.subject ? '<div class="error-message">⚠️ ' + errors.subject + '</div>' : '') +
+            '</div>' +
+            
+            '<div class="form-group">' +
+              '<label for="priority" class="form-label">Priority</label>' +
+              '<select ' +
+                'id="priority" ' +
+                'class="form-select" ' +
+                'value="' + formData.priority + '" ' +
+                'onchange="updateField(\'priority\', event.target.value)" ' +
+              '>' +
+                '<option value="low">Low - General inquiry</option>' +
+                '<option value="medium">Medium - Business question</option>' +
+                '<option value="high">High - Urgent request</option>' +
+              '</select>' +
+            '</div>' +
+          '</div>' +
+          
+          '<div class="form-group">' +
+            '<label for="message" class="form-label">Message <span class="required">*</span></label>' +
+            '<textarea ' +
+              'id="message" ' +
+              'class="form-textarea ' + (errors.message ? 'error' : '') + '" ' +
+              'value="' + formData.message + '" ' +
+              'oninput="updateField(\'message\', event.target.value)" ' +
+              'placeholder="Tell us about your project, questions, or how we can help you..." ' +
+              'maxlength="' + maxMessageLength + '" ' +
+              'required ' +
+            '></textarea>' +
+            '<div class="character-count">' +
+              formData.message.length + '/' + maxMessageLength + ' characters' +
+            '</div>' +
+            (errors.message ? '<div class="error-message">⚠️ ' + errors.message + '</div>' : '') +
+          '</div>' +
+          
+          '<div class="form-group">' +
+            '<label for="contactMethod" class="form-label">Preferred Contact Method</label>' +
+            '<select ' +
+              'id="contactMethod" ' +
+              'class="form-select" ' +
+              'value="' + formData.contactMethod + '" ' +
+              'onchange="updateField(\'contactMethod\', event.target.value)" ' +
+            '>' +
+              '<option value="email">Email</option>' +
+              '<option value="phone">Phone Call</option>' +
+              '<option value="either">Either Email or Phone</option>' +
+            '</select>' +
+          '</div>' +
+          
+          '<div class="form-group">' +
+            '<label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">' +
+              '<input ' +
+                'type="checkbox" ' +
+                'checked="' + formData.consentGiven + '" ' +
+                'onchange="updateField(\'consentGiven\', event.target.checked)" ' +
+                'required ' +
+                'style="margin-top: 4px;" ' +
+              '/>' +
+              '<span style="font-size: 14px; line-height: 1.4;">' +
+                'I consent to having this website store my submitted information for the purpose of responding to my inquiry. <span class="required">*</span>' +
+              '</span>' +
+            '</label>' +
+            (errors.consentGiven ? '<div class="error-message">⚠️ ' + errors.consentGiven + '</div>' : '') +
+          '</div>' +
+          
+          '<button ' +
+            'type="submit" ' +
+            'class="submit-btn" ' +
+            'disabled="' + (isSubmitting || !isFormValid()) + '"' +
+          '>' +
+            (isSubmitting ? 
+              '<span class="loading-spinner"></span> Sending Message...' : 
+              '📧 Send Message') +
+          '</button>' +
+        '</form>' +
+      '</div>'
+    }
     
-    <form on:submit="handleSubmit(event)">
-      <div class="form-group">
-        <label for="name">Name *</label>
-        <input 
-          type="text" 
-          id="name"
-          value="{formData.name}"
-          on:input="updateField('name', event.target.value)"
-          placeholder="Enter your name"
-        />
-        {errors.name ? '<div class="error">' + errors.name + '</div>' : ''}
-      </div>
-
-      <div class="form-group">
-        <label for="email">Email *</label>
-        <input 
-          type="email" 
-          id="email"
-          value="{formData.email}"
-          on:input="updateField('email', event.target.value)"
-          placeholder="Enter your email"
-        />
-        {errors.email ? '<div class="error">' + errors.email + '</div>' : ''}
-      </div>
-
-      <div class="form-group">
-        <label for="age">Age</label>
-        <input 
-          type="number" 
-          id="age"
-          value="{formData.age}"
-          on:input="updateField('age', parseInt(event.target.value))"
-          min="1"
-          max="120"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="country">Country</label>
-        <select 
-          id="country"
-          value="{formData.country}"
-          on:change="updateField('country', event.target.value)"
-        >
-          <option value="us">United States</option>
-          <option value="uk">United Kingdom</option>
-          <option value="ca">Canada</option>
-          <option value="au">Australia</option>
-          <option value="de">Germany</option>
-          <option value="fr">France</option>
-          <option value="jp">Japan</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="message">Message</label>
-        <textarea 
-          id="message"
-          value="{formData.message}"
-          on:input="updateField('message', event.target.value)"
-          placeholder="Enter your message..."
-          rows="4"
-        ></textarea>
-      </div>
-
-      <button 
-        type="submit" 
-        class="submit-btn"
-        disabled="{isSubmitting}"
-      >
-        {isSubmitting ? 'Submitting...' : 'Submit Form'}
-      </button>
-    </form>
+    <footer class="form-footer">
+      Need immediate assistance? Call us at 
+      <a href="tel:+1-555-0123">+1 (555) 0123</a> or email 
+      <a href="mailto:support@ezui.dev">support@ezui.dev</a>
+    </footer>
   </div>
+}
+
+script {
+  // Configuration
+  const API_ENDPOINT = '/api/contact';
+
+  // Enhanced field validation with production rules
+  function updateField(field, value) {
+    this.state.formData[field] = value;
+    
+    // Clear previous error for this field
+    if (this.state.errors[field]) {
+      delete this.state.errors[field];
+    }
+    
+    // Perform real-time validation
+    validateField.call(this, field, value);
+    
+    // Update component state
+    this.update();
+  }
+
+  // Comprehensive field validation
+  function validateField(field, value) {
+    const errors = this.state.errors;
+    
+    // Required field validation
+    if (this.state.requiredFields.includes(field)) {
+      if (!value || (typeof value === 'string' && value.trim() === '') || 
+          (field === 'consentGiven' && value !== true)) {
+        errors[field] = `${getFieldDisplayName(field)} is required`;
+        return;
+      }
+    }
+
+    // Skip other validations if field is empty and not required
+    if (!value || value === '') return;
+
+    // Field-specific validation
+    switch (field) {
+      case 'firstName':
+      case 'lastName':
+        if (value.length < 2) {
+          errors[field] = `${getFieldDisplayName(field)} must be at least 2 characters`;
+        } else if (value.length > 50) {
+          errors[field] = `${getFieldDisplayName(field)} must be no more than 50 characters`;
+        } else if (!/^[a-zA-Z\s\-']+$/.test(value)) {
+          errors[field] = `${getFieldDisplayName(field)} can only contain letters, spaces, hyphens, and apostrophes`;
+        }
+        break;
+
+      case 'email':
+        if (!this.state.validationRules.email.test(value)) {
+          errors[field] = 'Please enter a valid email address';
+        } else {
+          // Additional email validation
+          const emailParts = value.split('@');
+          if (emailParts.length !== 2 || emailParts[0].length === 0 || emailParts[1].length < 3) {
+            errors[field] = 'Please enter a valid email address';
+          }
+        }
+        break;
+
+      case 'phone':
+        if (value && !this.state.validationRules.phone.test(value)) {
+          errors[field] = 'Please enter a valid phone number';
+        }
+        break;
+
+      case 'subject':
+        if (value.length < 5) {
+          errors[field] = 'Subject must be at least 5 characters';
+        } else if (value.length > 100) {
+          errors[field] = 'Subject must be no more than 100 characters';
+        }
+        break;
+
+      case 'message':
+        if (value.length < this.state.validationRules.minMessageLength) {
+          errors[field] = `Message must be at least ${this.state.validationRules.minMessageLength} characters`;
+        } else if (value.length > this.state.maxMessageLength) {
+          errors[field] = `Message must be no more than ${this.state.maxMessageLength} characters`;
+        }
+        break;
+    }
+
+    // Cross-field validation
+    if (field === 'lastName' && this.state.formData.firstName && 
+        this.state.formData.firstName.toLowerCase() === value.toLowerCase()) {
+      errors[field] = 'First and last name should be different';
+    }
+
+    // Contact method validation
+    if (this.state.formData.contactMethod === 'phone' && 
+        (field === 'phone' || field === 'contactMethod') && !this.state.formData.phone) {
+      errors.phone = 'Phone number is required when phone contact is preferred';
+    }
+  }
+
+  // Get user-friendly field names
+  function getFieldDisplayName(field) {
+    const displayNames = {
+      firstName: 'First name',
+      lastName: 'Last name',
+      email: 'Email address',
+      phone: 'Phone number',
+      company: 'Company',
+      subject: 'Subject',
+      message: 'Message',
+      priority: 'Priority',
+      contactMethod: 'Contact method',
+      consentGiven: 'Consent'
+    };
+    return displayNames[field] || field;
+  }
+
+  // Check if form is valid for submit button state
+  function isFormValid() {
+    const formData = this.state.formData;
+    const errors = this.state.errors;
+    
+    // Check required fields
+    const requiredValid = this.state.requiredFields.every(field => {
+      if (field === 'consentGiven') {
+        return formData[field] === true;
+      }
+      return formData[field] && formData[field].toString().trim() !== '';
+    });
+    
+    // Check no validation errors
+    const noErrors = Object.keys(errors).length === 0;
+    
+    return requiredValid && noErrors;
+  }
+
+  // Enhanced form submission with real API integration
+  async function handleSubmit(event) {
+    event.preventDefault();
+    
+    if (this.state.isSubmitting) return;
+    
+    // Final validation before submission
+    const formData = this.state.formData;
+    this.state.errors = {};
+    
+    // Validate all fields
+    this.state.requiredFields.forEach(field => {
+      validateField.call(this, field, formData[field]);
+    });
+    
+    // Additional validations
+    Object.keys(formData).forEach(field => {
+      if (!this.state.requiredFields.includes(field)) {
+        validateField.call(this, field, formData[field]);
+      }
+    });
+    
+    if (!isFormValid.call(this)) {
+      // Focus on first error field
+      const firstErrorField = Object.keys(this.state.errors)[0];
+      if (firstErrorField) {
+        setTimeout(() => {
+          const element = document.getElementById(firstErrorField);
+          if (element) {
+            element.focus();
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
+      }
+      this.update();
+      return;
+    }
+    
+    this.state.isSubmitting = true;
+    this.update();
+    
+    try {
+      // Prepare submission data
+      const submissionData = {
+        ...formData,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        referrer: document.referrer || 'direct',
+        language: navigator.language,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      };
+
+      // Make API call to submit form
+      const response = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || ''
+        },
+        body: JSON.stringify(submissionData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`HTTP ${response.status}: ${errorData.message || response.statusText}`);
+      }
+
+      const result = await response.json();
+      
+      // Handle successful submission
+      this.state.isSubmitted = true;
+      this.state.submissionId = result.submissionId || `REF-${Date.now()}`;
+      
+      // Track conversion event (analytics)
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submit', {
+          'event_category': 'contact',
+          'event_label': formData.priority,
+          'value': 1
+        });
+      }
+
+      // Send notification if configured
+      if (result.confirmationSent) {
+        console.log('Confirmation email sent to:', formData.email);
+      }
+
+      // Clear form draft from localStorage
+      localStorage.removeItem('ezui-contact-form-draft');
+
+      // Auto-reset form after delay
+      setTimeout(() => {
+        resetForm.call(this);
+      }, 8000);
+      
+    } catch (error) {
+      console.error('Form submission failed:', error);
+      
+      // Handle different types of errors with user-friendly messages
+      if (error.name === 'TypeError' || !navigator.onLine) {
+        this.state.errors.submit = 'Connection error. Please check your internet and try again.';
+      } else if (error.message.includes('429')) {
+        this.state.errors.submit = 'Too many requests. Please wait a moment and try again.';
+      } else if (error.message.includes('400')) {
+        this.state.errors.submit = 'Invalid form data. Please check your entries and try again.';
+      } else if (error.message.includes('413')) {
+        this.state.errors.submit = 'Message too large. Please shorten your message and try again.';
+      } else if (error.message.includes('422')) {
+        this.state.errors.submit = 'Validation error. Please check all required fields.';
+      } else {
+        this.state.errors.submit = 'Failed to send message. Please try again or contact us directly.';
+      }
+      
+      // Track error event for monitoring
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'exception', {
+          'description': `Contact form error: ${error.message}`,
+          'fatal': false
+        });
+      }
+    }
+    
+    this.state.isSubmitting = false;
+    this.update();
+  }
+
+  // Reset form to initial state
+  function resetForm() {
+    this.state.formData = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      company: '',
+      subject: '',
+      message: '',
+      priority: 'medium',
+      contactMethod: 'email',
+      consentGiven: false
+    };
+    
+    this.state.errors = {};
+    this.state.isSubmitted = false;
+    this.state.submissionId = null;
+    
+    this.update();
+  }
+
+  // Initialize component
+  function init() {
+    console.log('Production Contact Form v2.0 initialized');
+    
+    // Auto-restore form data from localStorage (for better UX)
+    const savedData = localStorage.getItem('ezui-contact-form-draft');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        // Only restore non-sensitive data and validate it
+        if (parsed.firstName && typeof parsed.firstName === 'string') {
+          this.state.formData.firstName = parsed.firstName.substring(0, 50);
+        }
+        if (parsed.lastName && typeof parsed.lastName === 'string') {
+          this.state.formData.lastName = parsed.lastName.substring(0, 50);
+        }
+        if (parsed.company && typeof parsed.company === 'string') {
+          this.state.formData.company = parsed.company.substring(0, 100);
+        }
+        if (parsed.subject && typeof parsed.subject === 'string') {
+          this.state.formData.subject = parsed.subject.substring(0, 100);
+        }
+        if (parsed.message && typeof parsed.message === 'string') {
+          this.state.formData.message = parsed.message.substring(0, 1000);
+        }
+        if (parsed.priority && ['low', 'medium', 'high'].includes(parsed.priority)) {
+          this.state.formData.priority = parsed.priority;
+        }
+        if (parsed.contactMethod && ['email', 'phone', 'either'].includes(parsed.contactMethod)) {
+          this.state.formData.contactMethod = parsed.contactMethod;
+        }
+      } catch (e) {
+        console.warn('Could not restore form draft:', e);
+        localStorage.removeItem('ezui-contact-form-draft');
+      }
+    }
+
+    // Auto-save draft periodically (improved UX)
+    this.draftSaveInterval = setInterval(() => {
+      const formData = this.state.formData;
+      if (formData.firstName || formData.lastName || formData.subject || formData.message) {
+        try {
+          localStorage.setItem('ezui-contact-form-draft', JSON.stringify(formData));
+        } catch (e) {
+          console.warn('Could not save form draft:', e);
+        }
+      }
+    }, 30000);
+
+    // Add page visibility change listener to save draft when user leaves
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        const formData = this.state.formData;
+        if (formData.firstName || formData.lastName || formData.subject || formData.message) {
+          try {
+            localStorage.setItem('ezui-contact-form-draft', JSON.stringify(formData));
+          } catch (e) {
+            console.warn('Could not save form draft on page hide:', e);
+          }
+        }
+      }
+    });
+  }
+
+  // Cleanup function
+  function destroy() {
+    // Clear intervals and event listeners
+    if (this.draftSaveInterval) {
+      clearInterval(this.draftSaveInterval);
+    }
+    
+    // Clean up localStorage if form is completed
+    if (this.state.isSubmitted) {
+      localStorage.removeItem('ezui-contact-form-draft');
+    }
+  }
+
+  // Export component API
+  return {
+    init,
+    destroy,
+    updateField,
+    handleSubmit,
+    resetForm,
+    isFormValid,
+    validateField,
+    // Expose state getters for template access
+    get formData() { return this.state.formData; },
+    get errors() { return this.state.errors; },
+    get isSubmitting() { return this.state.isSubmitting; },
+    get isSubmitted() { return this.state.isSubmitted; },
+    get submissionId() { return this.state.submissionId; },
+    get maxMessageLength() { return this.state.maxMessageLength; }
+  };
 }

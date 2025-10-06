@@ -1,0 +1,1156 @@
+<component AuthenticationFlow.ezu>
+
+state {
+  // Current view state
+  currentView: 'login', // login, register, forgot-password, verify-email, two-factor
+  
+  // Form data
+  loginForm: {
+    email: '',
+    password: '',
+    rememberMe: false
+  },
+  
+  registerForm: {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    acceptTerms: false,
+    marketingConsent: false
+  },
+  
+  forgotPasswordForm: {
+    email: ''
+  },
+  
+  twoFactorForm: {
+    code: ''
+  },
+  
+  // Validation
+  errors: {},
+  isSubmitting: false,
+  
+  // Authentication state
+  user: null,
+  isAuthenticated: false,
+  session: null,
+  
+  // Security features
+  loginAttempts: 0,
+  isLocked: false,
+  lockoutTime: null,
+  
+  // OAuth providers
+  oauthProviders: [
+    { name: 'Google', icon: '🔍', enabled: true },
+    { name: 'GitHub', icon: '🐙', enabled: true },
+    { name: 'Microsoft', icon: '🏢', enabled: true }
+  ],
+  
+  // Two-factor authentication
+  twoFactorRequired: false,
+  twoFactorMethods: ['sms', 'email', 'authenticator'],
+  selectedTwoFactorMethod: 'sms',
+  
+  // Password strength
+  passwordStrength: {
+    score: 0,
+    feedback: [],
+    requirements: {
+      minLength: false,
+      hasUppercase: false,
+      hasLowercase: false,
+      hasNumbers: false,
+      hasSpecialChars: false
+    }
+  },
+  
+  // UI state
+  showPassword: false,
+  showConfirmPassword: false,
+  agreedToTerms: false
+}
+
+style {
+  .auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .auth-header {
+    padding: 32px 32px 24px;
+    text-align: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  }
+  
+  .auth-logo {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .auth-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary, #1a202c);
+    margin: 0 0 8px;
+  }
+  
+  .auth-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary, #64748b);
+    margin: 0;
+  }
+  
+  .auth-body {
+    padding: 24px 32px 32px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary, #374151);
+    margin-bottom: 6px;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.2s;
+    background: white;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent-color, #667eea);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+  
+  .form-input.error {
+    border-color: var(--danger-color, #ef4444);
+  }
+  
+  .password-input-wrapper {
+    position: relative;
+  }
+  
+  .password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary, #64748b);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+  }
+  
+  .password-toggle:hover {
+    color: var(--text-primary, #374151);
+  }
+  
+  .error-message {
+    color: var(--danger-color, #ef4444);
+    font-size: 12px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .password-strength {
+    margin-top: 8px;
+  }
+  
+  .strength-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  
+  .strength-segment {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--bg-secondary, #e5e7eb);
+    transition: background-color 0.2s;
+  }
+  
+  .strength-segment.filled.weak {
+    background: var(--danger-color, #ef4444);
+  }
+  
+  .strength-segment.filled.fair {
+    background: var(--warning-color, #f59e0b);
+  }
+  
+  .strength-segment.filled.good {
+    background: var(--info-color, #3b82f6);
+  }
+  
+  .strength-segment.filled.strong {
+    background: var(--success-color, #10b981);
+  }
+  
+  .strength-text {
+    font-size: 12px;
+    color: var(--text-secondary, #64748b);
+  }
+  
+  .checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  
+  .checkbox-input {
+    margin: 0;
+    transform: scale(1.2);
+    accent-color: var(--accent-color, #667eea);
+  }
+  
+  .checkbox-label {
+    font-size: 14px;
+    color: var(--text-secondary, #64748b);
+    line-height: 1.4;
+    cursor: pointer;
+  }
+  
+  .checkbox-label a {
+    color: var(--accent-color, #667eea);
+    text-decoration: none;
+  }
+  
+  .checkbox-label a:hover {
+    text-decoration: underline;
+  }
+  
+  .auth-button {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .auth-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  }
+  
+  .auth-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0;
+    color: var(--text-secondary, #64748b);
+    font-size: 14px;
+  }
+  
+  .divider::before,
+  .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color, #e5e7eb);
+  }
+  
+  .oauth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  
+  .oauth-button {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    background: white;
+    color: var(--text-primary, #374151);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  
+  .oauth-button:hover {
+    border-color: var(--accent-color, #667eea);
+    background: var(--bg-secondary, #f8fafc);
+  }
+  
+  .auth-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--text-secondary, #64748b);
+  }
+  
+  .auth-link {
+    color: var(--accent-color, #667eea);
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .auth-link:hover {
+    text-decoration: underline;
+  }
+  
+  .security-notice {
+    background: var(--warning-bg, #fef3c7);
+    border: 1px solid var(--warning-color, #f59e0b);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--warning-dark, #92400e);
+  }
+  
+  .two-factor-methods {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .method-button {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid var(--border-color, #e5e7eb);
+    border-radius: 6px;
+    background: white;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .method-button.active {
+    border-color: var(--accent-color, #667eea);
+    background: var(--accent-bg, #eef2ff);
+    color: var(--accent-color, #667eea);
+  }
+  
+  .code-input {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 0.5em;
+    padding: 16px;
+  }
+  
+  @media (max-width: 480px) {
+    .auth-container {
+      padding: 12px;
+    }
+    
+    .auth-card {
+      max-width: none;
+    }
+    
+    .auth-header,
+    .auth-body {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+}
+
+template {
+  <div class="auth-container">
+    <div class="auth-card">
+      <!-- Header -->
+      <div class="auth-header">
+        <div class="auth-logo">🔐</div>
+        <h1 class="auth-title">{getViewTitle()}</h1>
+        <p class="auth-subtitle">{getViewSubtitle()}</p>
+      </div>
+      
+      <!-- Security Notice (if locked out) -->
+      {isLocked ? 
+        '<div class="auth-body">' +
+          '<div class="security-notice">' +
+            '🔒 Account temporarily locked due to multiple failed login attempts. ' +
+            'Please try again in ' + getRemainingLockoutTime() + ' minutes.' +
+          '</div>' +
+        '</div>' :
+        
+        // Main Content
+        '<div class="auth-body">' +
+          (currentView === 'login' ? renderLoginForm() :
+           currentView === 'register' ? renderRegisterForm() :
+           currentView === 'forgot-password' ? renderForgotPasswordForm() :
+           currentView === 'two-factor' ? renderTwoFactorForm() :
+           currentView === 'verify-email' ? renderEmailVerificationForm() : '') +
+        '</div>'
+      }
+    </div>
+  </div>
+}
+
+script {
+  onMount() {
+    this.checkExistingSession();
+    this.loadOAuthProviders();
+    this.setupFormValidation();
+    
+    // Focus first input
+    setTimeout(() => {
+      const firstInput = this.element.querySelector('input:not([type="checkbox"])');
+      if (firstInput) firstInput.focus();
+    }, 100);
+  }
+  
+  // View management
+  switchView(view) {
+    this.updateState('currentView', view);
+    this.updateState('errors', {});
+    this.clearForms();
+  }
+  
+  getViewTitle() {
+    const titles = {
+      login: 'Welcome Back',
+      register: 'Create Account',
+      'forgot-password': 'Reset Password',
+      'two-factor': 'Verify Identity',
+      'verify-email': 'Verify Email'
+    };
+    return titles[this.state.currentView] || 'Authentication';
+  }
+  
+  getViewSubtitle() {
+    const subtitles = {
+      login: 'Sign in to your account to continue',
+      register: 'Join us and start your journey today',
+      'forgot-password': 'Enter your email to receive reset instructions',
+      'two-factor': 'Enter the verification code to continue',
+      'verify-email': 'Check your email for verification link'
+    };
+    return subtitles[this.state.currentView] || '';
+  }
+  
+  // Form rendering
+  renderLoginForm() {
+    return `
+      ${this.renderOAuthButtons()}
+      
+      <div class="divider">or continue with email</div>
+      
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input 
+            type="email" 
+            class="form-input ${this.state.errors.email ? 'error' : ''}"
+            value="${this.state.loginForm.email}"
+            oninput="updateLoginForm('email', event.target.value)"
+            placeholder="Enter your email"
+            required
+            autocomplete="email"
+          />
+          ${this.state.errors.email ? `<div class="error-message">⚠️ ${this.state.errors.email}</div>` : ''}
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="password-input-wrapper">
+            <input 
+              type="${this.state.showPassword ? 'text' : 'password'}"
+              class="form-input ${this.state.errors.password ? 'error' : ''}"
+              value="${this.state.loginForm.password}"
+              oninput="updateLoginForm('password', event.target.value)"
+              placeholder="Enter your password"
+              required
+              autocomplete="current-password"
+            />
+            <button 
+              type="button" 
+              class="password-toggle"
+              onclick="togglePasswordVisibility('showPassword')"
+            >
+              ${this.state.showPassword ? '👁️' : '👁️‍🗨️'}
+            </button>
+          </div>
+          ${this.state.errors.password ? `<div class="error-message">⚠️ ${this.state.errors.password}</div>` : ''}
+        </div>
+        
+        <div class="checkbox-group">
+          <input 
+            type="checkbox" 
+            id="remember-me"
+            class="checkbox-input"
+            checked="${this.state.loginForm.rememberMe}"
+            onchange="updateLoginForm('rememberMe', event.target.checked)"
+          />
+          <label for="remember-me" class="checkbox-label">
+            Remember me for 30 days
+          </label>
+        </div>
+        
+        <button 
+          type="submit" 
+          class="auth-button"
+          disabled="${this.state.isSubmitting}"
+        >
+          ${this.state.isSubmitting ? 
+            '<span class="loading-spinner"></span> Signing In...' : 
+            '🔓 Sign In'
+          }
+        </button>
+      </form>
+      
+      <div class="auth-footer">
+        <a class="auth-link" onclick="switchView('forgot-password')">
+          Forgot your password?
+        </a>
+        <br><br>
+        Don't have an account? 
+        <a class="auth-link" onclick="switchView('register')">
+          Sign up here
+        </a>
+      </div>
+    `;
+  }
+  
+  renderRegisterForm() {
+    return `
+      ${this.renderOAuthButtons()}
+      
+      <div class="divider">or create account with email</div>
+      
+      <form onsubmit="handleRegister(event)">
+        <div style="display: flex; gap: 12px;">
+          <div class="form-group" style="flex: 1; margin-bottom: 20px;">
+            <label class="form-label">First Name</label>
+            <input 
+              type="text" 
+              class="form-input ${this.state.errors.firstName ? 'error' : ''}"
+              value="${this.state.registerForm.firstName}"
+              oninput="updateRegisterForm('firstName', event.target.value)"
+              placeholder="First name"
+              required
+              autocomplete="given-name"
+            />
+            ${this.state.errors.firstName ? `<div class="error-message">⚠️ ${this.state.errors.firstName}</div>` : ''}
+          </div>
+          
+          <div class="form-group" style="flex: 1; margin-bottom: 20px;">
+            <label class="form-label">Last Name</label>
+            <input 
+              type="text" 
+              class="form-input ${this.state.errors.lastName ? 'error' : ''}"
+              value="${this.state.registerForm.lastName}"
+              oninput="updateRegisterForm('lastName', event.target.value)"
+              placeholder="Last name"
+              required
+              autocomplete="family-name"
+            />
+            ${this.state.errors.lastName ? `<div class="error-message">⚠️ ${this.state.errors.lastName}</div>` : ''}
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input 
+            type="email" 
+            class="form-input ${this.state.errors.email ? 'error' : ''}"
+            value="${this.state.registerForm.email}"
+            oninput="updateRegisterForm('email', event.target.value)"
+            placeholder="Enter your email"
+            required
+            autocomplete="email"
+          />
+          ${this.state.errors.email ? `<div class="error-message">⚠️ ${this.state.errors.email}</div>` : ''}
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="password-input-wrapper">
+            <input 
+              type="${this.state.showPassword ? 'text' : 'password'}"
+              class="form-input ${this.state.errors.password ? 'error' : ''}"
+              value="${this.state.registerForm.password}"
+              oninput="updateRegisterForm('password', event.target.value); checkPasswordStrength(event.target.value)"
+              placeholder="Create a strong password"
+              required
+              autocomplete="new-password"
+            />
+            <button 
+              type="button" 
+              class="password-toggle"
+              onclick="togglePasswordVisibility('showPassword')"
+            >
+              ${this.state.showPassword ? '👁️' : '👁️‍🗨️'}
+            </button>
+          </div>
+          ${this.state.errors.password ? `<div class="error-message">⚠️ ${this.state.errors.password}</div>` : ''}
+          ${this.renderPasswordStrength()}
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <div class="password-input-wrapper">
+            <input 
+              type="${this.state.showConfirmPassword ? 'text' : 'password'}"
+              class="form-input ${this.state.errors.confirmPassword ? 'error' : ''}"
+              value="${this.state.registerForm.confirmPassword}"
+              oninput="updateRegisterForm('confirmPassword', event.target.value)"
+              placeholder="Confirm your password"
+              required
+              autocomplete="new-password"
+            />
+            <button 
+              type="button" 
+              class="password-toggle"
+              onclick="togglePasswordVisibility('showConfirmPassword')"
+            >
+              ${this.state.showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+            </button>
+          </div>
+          ${this.state.errors.confirmPassword ? `<div class="error-message">⚠️ ${this.state.errors.confirmPassword}</div>` : ''}
+        </div>
+        
+        <div class="checkbox-group">
+          <input 
+            type="checkbox" 
+            id="accept-terms"
+            class="checkbox-input"
+            checked="${this.state.registerForm.acceptTerms}"
+            onchange="updateRegisterForm('acceptTerms', event.target.checked)"
+            required
+          />
+          <label for="accept-terms" class="checkbox-label">
+            I agree to the <a href="/terms" target="_blank">Terms of Service</a> 
+            and <a href="/privacy" target="_blank">Privacy Policy</a>
+          </label>
+        </div>
+        
+        <div class="checkbox-group">
+          <input 
+            type="checkbox" 
+            id="marketing-consent"
+            class="checkbox-input"
+            checked="${this.state.registerForm.marketingConsent}"
+            onchange="updateRegisterForm('marketingConsent', event.target.checked)"
+          />
+          <label for="marketing-consent" class="checkbox-label">
+            Send me product updates and marketing communications
+          </label>
+        </div>
+        
+        <button 
+          type="submit" 
+          class="auth-button"
+          disabled="${this.state.isSubmitting || !this.state.registerForm.acceptTerms}"
+        >
+          ${this.state.isSubmitting ? 
+            '<span class="loading-spinner"></span> Creating Account...' : 
+            '🚀 Create Account'
+          }
+        </button>
+      </form>
+      
+      <div class="auth-footer">
+        Already have an account? 
+        <a class="auth-link" onclick="switchView('login')">
+          Sign in here
+        </a>
+      </div>
+    `;
+  }
+  
+  renderForgotPasswordForm() {
+    return `
+      <form onsubmit="handleForgotPassword(event)">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input 
+            type="email" 
+            class="form-input ${this.state.errors.email ? 'error' : ''}"
+            value="${this.state.forgotPasswordForm.email}"
+            oninput="updateForgotPasswordForm('email', event.target.value)"
+            placeholder="Enter your registered email"
+            required
+            autocomplete="email"
+          />
+          ${this.state.errors.email ? `<div class="error-message">⚠️ ${this.state.errors.email}</div>` : ''}
+        </div>
+        
+        <button 
+          type="submit" 
+          class="auth-button"
+          disabled="${this.state.isSubmitting}"
+        >
+          ${this.state.isSubmitting ? 
+            '<span class="loading-spinner"></span> Sending...' : 
+            '📧 Send Reset Link'
+          }
+        </button>
+      </form>
+      
+      <div class="auth-footer">
+        Remember your password? 
+        <a class="auth-link" onclick="switchView('login')">
+          Back to sign in
+        </a>
+      </div>
+    `;
+  }
+  
+  renderTwoFactorForm() {
+    return `
+      <div class="two-factor-methods">
+        ${this.state.twoFactorMethods.map(method => `
+          <button 
+            type="button"
+            class="method-button ${this.state.selectedTwoFactorMethod === method ? 'active' : ''}"
+            onclick="selectTwoFactorMethod('${method}')"
+          >
+            ${method === 'sms' ? '📱 SMS' : 
+              method === 'email' ? '📧 Email' : 
+              '📲 App'}
+          </button>
+        `).join('')}
+      </div>
+      
+      <form onsubmit="handleTwoFactor(event)">
+        <div class="form-group">
+          <label class="form-label">
+            Verification Code
+            ${this.state.selectedTwoFactorMethod === 'sms' ? '(via SMS)' :
+              this.state.selectedTwoFactorMethod === 'email' ? '(via Email)' :
+              '(from Authenticator App)'}
+          </label>
+          <input 
+            type="text" 
+            class="form-input code-input ${this.state.errors.code ? 'error' : ''}"
+            value="${this.state.twoFactorForm.code}"
+            oninput="updateTwoFactorForm('code', event.target.value)"
+            placeholder="000000"
+            maxlength="6"
+            pattern="[0-9]{6}"
+            required
+            autocomplete="one-time-code"
+          />
+          ${this.state.errors.code ? `<div class="error-message">⚠️ ${this.state.errors.code}</div>` : ''}
+        </div>
+        
+        <button 
+          type="submit" 
+          class="auth-button"
+          disabled="${this.state.isSubmitting}"
+        >
+          ${this.state.isSubmitting ? 
+            '<span class="loading-spinner"></span> Verifying...' : 
+            '✅ Verify Code'
+          }
+        </button>
+      </form>
+      
+      <div class="auth-footer">
+        Didn't receive the code? 
+        <a class="auth-link" onclick="resendTwoFactorCode()">
+          Resend Code
+        </a>
+        <br><br>
+        <a class="auth-link" onclick="switchView('login')">
+          Back to sign in
+        </a>
+      </div>
+    `;
+  }
+  
+  renderOAuthButtons() {
+    return `
+      <div class="oauth-buttons">
+        ${this.state.oauthProviders.filter(p => p.enabled).map(provider => `
+          <button 
+            type="button"
+            class="oauth-button"
+            onclick="handleOAuthLogin('${provider.name.toLowerCase()}')"
+          >
+            <span style="font-size: 18px;">${provider.icon}</span>
+            Continue with ${provider.name}
+          </button>
+        `).join('')}
+      </div>
+    `;
+  }
+  
+  renderPasswordStrength() {
+    if (!this.state.registerForm.password) return '';
+    
+    const { score, requirements } = this.state.passwordStrength;
+    const strengthLabels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+    const strengthColors = ['weak', 'weak', 'fair', 'good', 'strong'];
+    
+    return `
+      <div class="password-strength">
+        <div class="strength-bar">
+          ${[1, 2, 3, 4, 5].map(i => `
+            <div class="strength-segment ${score >= i ? `filled ${strengthColors[score - 1]}` : ''}"></div>
+          `).join('')}
+        </div>
+        <div class="strength-text">
+          Password strength: ${strengthLabels[score - 1] || 'Very Weak'}
+        </div>
+      </div>
+    `;
+  }
+  
+  // Form handlers
+  async handleLogin(event) {
+    event.preventDefault();
+    
+    if (this.state.isLocked) return;
+    
+    this.updateState('isSubmitting', true);
+    this.updateState('errors', {});
+    
+    try {
+      const { email, password, rememberMe } = this.state.loginForm;
+      
+      // Client-side validation
+      if (!this.validateEmail(email)) {
+        throw new Error('Please enter a valid email address');
+      }
+      
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, rememberMe })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        // Handle different error scenarios
+        if (response.status === 429) {
+          this.handleAccountLockout();
+        } else if (data.twoFactorRequired) {
+          this.updateState('twoFactorRequired', true);
+          this.switchView('two-factor');
+        } else {
+          throw new Error(data.message || 'Login failed');
+        }
+        return;
+      }
+      
+      // Successful login
+      this.handleSuccessfulAuth(data);
+      
+    } catch (error) {
+      this.updateState('loginAttempts', this.state.loginAttempts + 1);
+      
+      if (this.state.loginAttempts >= 5) {
+        this.handleAccountLockout();
+      } else {
+        this.updateState('errors', { 
+          password: error.message || 'Invalid email or password' 
+        });
+      }
+    } finally {
+      this.updateState('isSubmitting', false);
+    }
+  }
+  
+  async handleRegister(event) {
+    event.preventDefault();
+    
+    this.updateState('isSubmitting', true);
+    this.updateState('errors', {});
+    
+    try {
+      const formData = this.state.registerForm;
+      
+      // Validation
+      const errors = this.validateRegistrationForm(formData);
+      if (Object.keys(errors).length > 0) {
+        this.updateState('errors', errors);
+        return;
+      }
+      
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed');
+      }
+      
+      // Registration successful - show email verification
+      this.switchView('verify-email');
+      
+    } catch (error) {
+      this.updateState('errors', { 
+        general: error.message || 'Registration failed' 
+      });
+    } finally {
+      this.updateState('isSubmitting', false);
+    }
+  }
+  
+  // Authentication utilities
+  checkExistingSession() {
+    const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+    
+    if (token) {
+      // Validate token and redirect if valid
+      this.validateToken(token);
+    }
+  }
+  
+  async validateToken(token) {
+    try {
+      const response = await fetch('/api/auth/validate', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const userData = await response.json();
+        this.handleSuccessfulAuth(userData);
+      }
+    } catch (error) {
+      // Token invalid - clear storage
+      localStorage.removeItem('auth_token');
+      sessionStorage.removeItem('auth_token');
+    }
+  }
+  
+  handleSuccessfulAuth(authData) {
+    const { user, token, session } = authData;
+    
+    this.updateState('user', user);
+    this.updateState('isAuthenticated', true);
+    this.updateState('session', session);
+    
+    // Store token
+    if (this.state.loginForm.rememberMe) {
+      localStorage.setItem('auth_token', token);
+    } else {
+      sessionStorage.setItem('auth_token', token);
+    }
+    
+    // Reset login attempts
+    this.updateState('loginAttempts', 0);
+    
+    // Redirect to dashboard or intended page
+    const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/dashboard';
+    window.location.href = redirectUrl;
+  }
+  
+  handleAccountLockout() {
+    this.updateState('isLocked', true);
+    this.updateState('lockoutTime', new Date(Date.now() + 15 * 60000)); // 15 minutes
+    
+    setTimeout(() => {
+      this.updateState('isLocked', false);
+      this.updateState('loginAttempts', 0);
+    }, 15 * 60000);
+  }
+  
+  // Validation
+  validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+  
+  validateRegistrationForm(formData) {
+    const errors = {};
+    
+    if (!formData.firstName.trim()) {
+      errors.firstName = 'First name is required';
+    }
+    
+    if (!formData.lastName.trim()) {
+      errors.lastName = 'Last name is required';
+    }
+    
+    if (!this.validateEmail(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+    
+    if (this.state.passwordStrength.score < 3) {
+      errors.password = 'Password is too weak';
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match';
+    }
+    
+    if (!formData.acceptTerms) {
+      errors.acceptTerms = 'You must accept the terms and conditions';
+    }
+    
+    return errors;
+  }
+  
+  checkPasswordStrength(password) {
+    const requirements = {
+      minLength: password.length >= 8,
+      hasUppercase: /[A-Z]/.test(password),
+      hasLowercase: /[a-z]/.test(password),
+      hasNumbers: /\d/.test(password),
+      hasSpecialChars: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+    
+    const score = Object.values(requirements).filter(Boolean).length;
+    
+    this.updateState('passwordStrength', {
+      score,
+      requirements
+    });
+  }
+  
+  // Form update methods
+  updateLoginForm(field, value) {
+    this.updateState(`loginForm.${field}`, value);
+    
+    // Clear related errors
+    if (this.state.errors[field]) {
+      const errors = { ...this.state.errors };
+      delete errors[field];
+      this.updateState('errors', errors);
+    }
+  }
+  
+  updateRegisterForm(field, value) {
+    this.updateState(`registerForm.${field}`, value);
+    
+    // Clear related errors
+    if (this.state.errors[field]) {
+      const errors = { ...this.state.errors };
+      delete errors[field];
+      this.updateState('errors', errors);
+    }
+  }
+  
+  updateForgotPasswordForm(field, value) {
+    this.updateState(`forgotPasswordForm.${field}`, value);
+  }
+  
+  updateTwoFactorForm(field, value) {
+    this.updateState(`twoFactorForm.${field}`, value);
+  }
+  
+  // UI helpers
+  togglePasswordVisibility(field) {
+    this.updateState(field, !this.state[field]);
+  }
+  
+  clearForms() {
+    this.updateState('loginForm', {
+      email: '',
+      password: '',
+      rememberMe: false
+    });
+    
+    this.updateState('registerForm', {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      acceptTerms: false,
+      marketingConsent: false
+    });
+    
+    this.updateState('forgotPasswordForm', { email: '' });
+    this.updateState('twoFactorForm', { code: '' });
+  }
+  
+  getRemainingLockoutTime() {
+    if (!this.state.lockoutTime) return 0;
+    
+    const remaining = Math.max(0, this.state.lockoutTime - new Date());
+    return Math.ceil(remaining / 60000); // Convert to minutes
+  }
+}
+
+</component>
