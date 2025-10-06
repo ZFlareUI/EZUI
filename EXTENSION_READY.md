@@ -1,12 +1,12 @@
 # 🎉 EZUI VS Code Extension - Ready to Install!
 
-## ✅ Extension Package Created Successfully
+##  Extension Package Created Successfully
 
 Your EZUI VS Code extension has been built and is ready to use!
 
-**📦 Package Location:** `ezui-syntax-1.0.0.vsix` (506.69 KB)
+** Package Location:** `ezui-syntax-1.0.0.vsix` (506.69 KB)
 
-## 🚀 How to Install & Use
+##  How to Install & Use
 
 ### Method 1: Install via VS Code UI
 1. Open VS Code
@@ -31,7 +31,7 @@ code .
 # This opens a new VS Code window with the extension loaded
 ```
 
-## 🧪 Test the Extension
+##  Test the Extension
 
 1. **Open Sample Files:**
    - `examples/Counter.ezui` - Complete component example
@@ -39,12 +39,12 @@ code .
 
 2. **Expected Features:**
    - ✨ **Syntax Highlighting** for all EZUI blocks
-   - 🔧 **Auto-completion** for EZUI keywords
-   - 🎯 **Hover Information** on EZUI elements
-   - ⚡ **Compile Command** (`Ctrl+Shift+E`)
-   - 👁️ **Preview Command** (right-click .ezui files)
+   -  **Auto-completion** for EZUI keywords
+   -  **Hover Information** on EZUI elements
+   -  **Compile Command** (`Ctrl+Shift+E`)
+   -  **Preview Command** (right-click .ezui files)
 
-## 🎨 What You'll See
+##  What You'll See
 
 ### Syntax Highlighting:
 - `<component Name.ezui>` - Component declarations
@@ -72,7 +72,7 @@ vscode-extension/
     └── extension.js          ← Compiled extension logic
 ```
 
-## 🔄 Updating the Extension
+##  Updating the Extension
 
 If you make changes to the extension:
 
@@ -82,7 +82,7 @@ npm run compile    # Recompile TypeScript
 npx vsce package   # Create new .vsix package
 ```
 
-## 🎯 Next Steps
+##  Next Steps
 
 1. **Install the extension** using one of the methods above
 2. **Open** `examples/Counter.ezui` to see syntax highlighting

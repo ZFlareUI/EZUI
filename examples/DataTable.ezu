@@ -416,7 +416,7 @@ template {
         on:click="toggleAutoRefresh()"
         title="Toggle Auto Refresh"
       >
-        {autoRefresh ? '⏸️' : '▶️'} Auto Refresh
+        {autoRefresh ? 'Pause' : 'Play'} Auto Refresh
       </button>
       
       <button 
@@ -424,7 +424,7 @@ template {
         on:click="refreshData()"
         title="Refresh Data"
       >
-        🔄 Refresh
+        Refresh
       </button>
       
       <button 
@@ -441,7 +441,7 @@ template {
         on:click="toggleColumnSettings()"
         title="Column Settings"
       >
-        ⚙️ Columns
+        Columns
       </button>
       
       <button 
@@ -462,7 +462,7 @@ template {
         on:click="bulkEdit()"
         disabled="{isBulkProcessing}"
       >
-        ✏️ Edit
+        Edit
       </button>
       
       <button 
@@ -470,7 +470,7 @@ template {
         on:click="bulkDelete()"
         disabled="{isBulkProcessing}"
       >
-        🗑️ Delete
+        Delete
       </button>
       
       <button 
@@ -485,14 +485,14 @@ template {
         class="table-action-btn"
         on:click="clearSelection()"
       >
-        ❌ Clear
+        Clear
       </button>
     </div>
     
     <!-- Error State -->
     {isError ? 
       '<div class="error-state">' +
-        '<div class="error-icon">⚠️</div>' +
+        '<div class="error-icon">!</div>' +
         '<h3>Error Loading Data</h3>' +
         '<p>' + errorMessage + '</p>' +
         '<button class="table-action-btn primary" onclick="refreshData()">Try Again</button>' +
@@ -501,7 +501,7 @@ template {
       // Data Table
       data.length === 0 && !isLoading ? 
         '<div class="empty-state">' +
-          '<div class="empty-icon">📊</div>' +
+          '<div class="empty-icon">∅</div>' +
           '<h3>No Data Available</h3>' +
           '<p>There are no records to display. Try adjusting your filters or create a new record.</p>' +
           '<button class="table-action-btn primary" onclick="createNew()">Create First Record</button>' +
@@ -523,7 +523,7 @@ template {
                     (column.sortable !== false ? 
                       '<span class="sort-indicator ' + (sortField === column.key ? 'active' : '') + '">' +
                         (sortField === column.key ? 
-                          (sortDirection === 'asc' ? '↑' : '↓') : '↕️') +
+                          (sortDirection === 'asc' ? '↑' : '↓') : '↕') +
                       '</span>' : '') +
                   '</th>'
                 ).join('') +
@@ -547,9 +547,9 @@ template {
                   ).join('') +
                   '<td>' +
                     '<div class="cell-actions">' +
-                      '<button class="cell-action" onclick="viewRecord(\'' + row.id + '\')" title="View">👁️</button>' +
-                      '<button class="cell-action" onclick="editRecord(\'' + row.id + '\')" title="Edit">✏️</button>' +
-                      '<button class="cell-action" onclick="deleteRecord(\'' + row.id + '\')" title="Delete">🗑️</button>' +
+                      '<button class="cell-action" onclick="viewRecord(\'' + row.id + '\')" title="View">View</button>' +
+                      '<button class="cell-action" onclick="editRecord(\'' + row.id + '\')" title="Edit">Edit</button>' +
+                      '<button class="cell-action" onclick="deleteRecord(\'' + row.id + '\')" title="Delete">Del</button>' +
                     '</div>' +
                   '</td>' +
                 '</tr>'

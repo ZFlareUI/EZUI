@@ -4,7 +4,7 @@ This extension provides comprehensive language support for EZUI framework files 
 
 ## Features
 
-### 🎨 Syntax Highlighting
+### Syntax Highlighting
 - Full syntax highlighting for EZUI component files
 - Support for all EZUI blocks: `component`, `state`, `style`, `template`, `script`
 - Embedded language support for JavaScript, CSS, and HTML
@@ -16,7 +16,7 @@ This extension provides comprehensive language support for EZUI framework files 
 - Snippet support for common EZUI patterns
 - Hover information for EZUI keywords
 
-### 🔧 Development Tools
+### Development Tools
 - **Compile Command**: `Ctrl+Shift+E` (or `Cmd+Shift+E` on Mac) to compile EZUI files
 - **Preview Command**: Right-click on `.ezui` files to preview components
 - Context menu integration for EZUI files
@@ -119,4 +119,4 @@ For issues and feature requests, please visit our [GitHub repository](https://gi
 
 ---
 
-**Enjoy coding with EZUI! 🚀**
+**Enjoy coding with EZUI!**

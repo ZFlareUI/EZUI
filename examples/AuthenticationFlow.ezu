@@ -451,7 +451,7 @@ template {
       {isLocked ? 
         '<div class="auth-body">' +
           '<div class="security-notice">' +
-            '🔒 Account temporarily locked due to multiple failed login attempts. ' +
+            'Account temporarily locked due to multiple failed login attempts. ' +
             'Please try again in ' + getRemainingLockoutTime() + ' minutes.' +
           '</div>' +
         '</div>' :
@@ -530,7 +530,7 @@ script {
             required
             autocomplete="email"
           />
-          ${this.state.errors.email ? `<div class="error-message">⚠️ ${this.state.errors.email}</div>` : ''}
+          ${this.state.errors.email ? `<div class="error-message">${this.state.errors.email}</div>` : ''}
         </div>
         
         <div class="form-group">
@@ -550,10 +550,10 @@ script {
               class="password-toggle"
               onclick="togglePasswordVisibility('showPassword')"
             >
-              ${this.state.showPassword ? '👁️' : '👁️‍🗨️'}
+              ${this.state.showPassword ? 'Show' : 'Show‍🗨️'}
             </button>
           </div>
-          ${this.state.errors.password ? `<div class="error-message">⚠️ ${this.state.errors.password}</div>` : ''}
+          ${this.state.errors.password ? `<div class="error-message">${this.state.errors.password}</div>` : ''}
         </div>
         
         <div class="checkbox-group">
@@ -613,7 +613,7 @@ script {
               required
               autocomplete="given-name"
             />
-            ${this.state.errors.firstName ? `<div class="error-message">⚠️ ${this.state.errors.firstName}</div>` : ''}
+            ${this.state.errors.firstName ? `<div class="error-message">${this.state.errors.firstName}</div>` : ''}
           </div>
           
           <div class="form-group" style="flex: 1; margin-bottom: 20px;">
@@ -627,7 +627,7 @@ script {
               required
               autocomplete="family-name"
             />
-            ${this.state.errors.lastName ? `<div class="error-message">⚠️ ${this.state.errors.lastName}</div>` : ''}
+            ${this.state.errors.lastName ? `<div class="error-message">${this.state.errors.lastName}</div>` : ''}
           </div>
         </div>
         
@@ -642,7 +642,7 @@ script {
             required
             autocomplete="email"
           />
-          ${this.state.errors.email ? `<div class="error-message">⚠️ ${this.state.errors.email}</div>` : ''}
+          ${this.state.errors.email ? `<div class="error-message">${this.state.errors.email}</div>` : ''}
         </div>
         
         <div class="form-group">
@@ -662,10 +662,10 @@ script {
               class="password-toggle"
               onclick="togglePasswordVisibility('showPassword')"
             >
-              ${this.state.showPassword ? '👁️' : '👁️‍🗨️'}
+              ${this.state.showPassword ? 'Show' : 'Show‍🗨️'}
             </button>
           </div>
-          ${this.state.errors.password ? `<div class="error-message">⚠️ ${this.state.errors.password}</div>` : ''}
+          ${this.state.errors.password ? `<div class="error-message">${this.state.errors.password}</div>` : ''}
           ${this.renderPasswordStrength()}
         </div>
         
@@ -686,10 +686,10 @@ script {
               class="password-toggle"
               onclick="togglePasswordVisibility('showConfirmPassword')"
             >
-              ${this.state.showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+              ${this.state.showConfirmPassword ? 'Show' : 'Show‍🗨️'}
             </button>
           </div>
-          ${this.state.errors.confirmPassword ? `<div class="error-message">⚠️ ${this.state.errors.confirmPassword}</div>` : ''}
+          ${this.state.errors.confirmPassword ? `<div class="error-message">${this.state.errors.confirmPassword}</div>` : ''}
         </div>
         
         <div class="checkbox-group">
@@ -727,7 +727,7 @@ script {
         >
           ${this.state.isSubmitting ? 
             '<span class="loading-spinner"></span> Creating Account...' : 
-            '🚀 Create Account'
+            'Create Account'
           }
         </button>
       </form>
@@ -755,7 +755,7 @@ script {
             required
             autocomplete="email"
           />
-          ${this.state.errors.email ? `<div class="error-message">⚠️ ${this.state.errors.email}</div>` : ''}
+          ${this.state.errors.email ? `<div class="error-message">${this.state.errors.email}</div>` : ''}
         </div>
         
         <button 
@@ -765,7 +765,7 @@ script {
         >
           ${this.state.isSubmitting ? 
             '<span class="loading-spinner"></span> Sending...' : 
-            '📧 Send Reset Link'
+            'Send Reset Link'
           }
         </button>
       </form>
@@ -789,7 +789,7 @@ script {
             onclick="selectTwoFactorMethod('${method}')"
           >
             ${method === 'sms' ? '📱 SMS' : 
-              method === 'email' ? '📧 Email' : 
+              method === 'email' ? 'Email' : 
               '📲 App'}
           </button>
         `).join('')}
@@ -814,7 +814,7 @@ script {
             required
             autocomplete="one-time-code"
           />
-          ${this.state.errors.code ? `<div class="error-message">⚠️ ${this.state.errors.code}</div>` : ''}
+          ${this.state.errors.code ? `<div class="error-message">${this.state.errors.code}</div>` : ''}
         </div>
         
         <button 
@@ -824,7 +824,7 @@ script {
         >
           ${this.state.isSubmitting ? 
             '<span class="loading-spinner"></span> Verifying...' : 
-            '✅ Verify Code'
+            'Verify Code'
           }
         </button>
       </form>

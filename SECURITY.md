@@ -6,10 +6,10 @@ We actively support the following versions of EZUI Framework with security updat
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.0.x   | ✅ Fully Supported |
-| 1.9.x   | ✅ Security Updates Only |
-| 1.8.x   | ⚠️ End of Life (EOL) |
-| < 1.8   | ❌ Not Supported   |
+| 2.0.x   | [SUPPORTED] Fully Supported |
+| 1.9.x   | [SUPPORTED] Security Updates Only |
+| 1.8.x   | [WARNING] End of Life (EOL) |
+| < 1.8   | [NOT SUPPORTED] Not Supported   |
 
 ## Security Architecture
 
@@ -99,25 +99,25 @@ Please provide the following information:
 ### Application Security
 
 ```javascript
-// ✅ Good: Properly sanitized user input
+// [SUPPORTED] Good: Properly sanitized user input
 const userInput = DOMPurify.sanitize(input);
 component.setState({ message: userInput });
 
-// ❌ Bad: Unsanitized user input
+// [NOT SUPPORTED] Bad: Unsanitized user input
 component.setState({ message: input });
 
-// ✅ Good: Parameterized database queries
+// [SUPPORTED] Good: Parameterized database queries
 const query = 'SELECT * FROM users WHERE id = $1';
 db.query(query, [userId]);
 
-// ❌ Bad: String concatenation (SQL injection risk)
+// [NOT SUPPORTED] Bad: String concatenation (SQL injection risk)
 const query = `SELECT * FROM users WHERE id = ${userId}`;
 ```
 
 ### Authentication Implementation
 
 ```javascript
-// ✅ Good: Strong password requirements
+// [SUPPORTED] Good: Strong password requirements
 const passwordPolicy = {
   minLength: 12,
   requireUppercase: true,
@@ -127,7 +127,7 @@ const passwordPolicy = {
   prohibitCommon: true
 };
 
-// ✅ Good: Secure session management
+// [SUPPORTED] Good: Secure session management
 const sessionConfig = {
   secret: process.env.SESSION_SECRET, // Strong, random secret
   secure: true,                       // HTTPS only
@@ -140,7 +140,7 @@ const sessionConfig = {
 ### Content Security Policy
 
 ```javascript
-// ✅ Recommended CSP for EZUI applications
+// [SUPPORTED] Recommended CSP for EZUI applications
 const csp = {
   'default-src': ["'self'"],
   'script-src': ["'self'", "'unsafe-inline'"], // Consider nonce-based approach
@@ -157,7 +157,7 @@ const csp = {
 ### Rate Limiting Configuration
 
 ```javascript
-// ✅ Production rate limiting settings
+// [SUPPORTED] Production rate limiting settings
 const rateLimits = {
   // Authentication endpoints
   '/api/auth/login': {
