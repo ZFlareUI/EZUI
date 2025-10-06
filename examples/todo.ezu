@@ -1,0 +1,133 @@
+<component TodoList.ezu>
+
+style {
+  .todo-app {
+    max-width: 400px
+    margin: 20px auto
+    padding: 20px
+    background: white
+    border-radius: 10px
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)
+  }
+
+  h2 {
+    color: #2c3e50
+    text-align: center
+    margin-bottom: 20px
+  }
+
+  .input-section {
+    display: flex
+    gap: 10px
+    margin-bottom: 20px
+  }
+
+  input {
+    flex: 1
+    padding: 10px
+    border: 2px solid #ddd
+    border-radius: 5px
+    font-size: 16px
+  }
+
+  input:focus {
+    outline: none
+    border-color: #3498db
+  }
+
+  .add-btn {
+    padding: 10px 20px
+    background: #27ae60
+    color: white
+    border: none
+    border-radius: 5px
+    cursor: pointer
+    font-size: 16px
+  }
+
+  .add-btn:hover {
+    background: #229954
+  }
+
+  .todo-list {
+    list-style: none
+    padding: 0
+  }
+
+  .todo-item {
+    display: flex
+    align-items: center
+    padding: 12px
+    margin-bottom: 8px
+    background: #f8f9fa
+    border-radius: 5px
+    border-left: 4px solid #3498db
+  }
+
+  .todo-item.completed {
+    opacity: 0.6
+    text-decoration: line-through
+    border-left-color: #27ae60
+  }
+
+  .todo-checkbox {
+    margin-right: 12px
+  }
+
+  .todo-text {
+    flex: 1
+    font-size: 16px
+  }
+
+  .delete-btn {
+    background: #e74c3c
+    color: white
+    border: none
+    padding: 6px 12px
+    border-radius: 3px
+    cursor: pointer
+    font-size: 12px
+  }
+
+  .delete-btn:hover {
+    background: #c0392b
+  }
+
+  .stats {
+    margin-top: 20px
+    text-align: center
+    color: #7f8c8d
+    font-size: 14px
+  }
+}
+
+state {
+  todos: []
+  newTodo: ""
+  nextId: 1
+}
+
+template {
+  <div class="todo-app">
+    <h2>Todo List</h2>
+    
+    <div class="input-section">
+      <input 
+        type="text" 
+        placeholder="Add a new todo..."
+        value="{newTodo}"
+        on:input="newTodo = event.target.value"
+        on:keypress="event.key === 'Enter' ? addTodo() : null"
+      />
+      <button class="add-btn" on:click="addTodo()">Add</button>
+    </div>
+
+    <ul class="todo-list">
+      <!-- Todo items would be rendered here -->
+    </ul>
+
+    <div class="stats">
+      Total: {todos.length} | Completed: {todos.filter(t => t.completed).length}
+    </div>
+  </div>
+}

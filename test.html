@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EZUI Framework - Simple Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+    </style>
+
+    <!-- Load EZUI Framework -->
+    <script type="module" src="src/ezui.js"></script>
+    
+    <!-- Inline Counter Component -->
+    <script type="text/ezu">
+        <component InlineCounter.ezu>
+
+        style {
+          .counter {
+            padding: 20px
+            background: #f5f5f5
+            border-radius: 8px
+            text-align: center
+          }
+
+          h2 {
+            color: #333
+            margin-bottom: 20px
+          }
+
+          button {
+            font-size: 18px
+            padding: 12px 24px
+            margin: 0 8px
+            background: #007acc
+            color: white
+            border: none
+            border-radius: 6px
+            cursor: pointer
+          }
+
+          button:hover {
+            background: #005a9e
+          }
+
+          .count-display {
+            font-size: 24px
+            font-weight: bold
+            margin: 15px 0
+            color: #007acc
+          }
+        }
+
+        state {
+          count: 0
+        }
+
+        template {
+          <div class="counter">
+            <h2>Inline Counter</h2>
+            <div class="count-display">Count: {count}</div>
+            <div>
+              <button on:click="count++">+</button>
+              <button on:click="count--">-</button>
+              <button on:click="count = 0">Reset</button>
+            </div>
+          </div>
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>EZUI Framework</h1>
+        <p>Simple Test - Lightweight, Reactive Components</p>
+    </div>
+
+    <div class="demo-container">
+        <div class="demo-card">
+            <h3>Inline Counter Component</h3>
+            <ezui-inlinecounter></ezui-inlinecounter>
+        </div>
+
+        <div class="demo-card">
+            <h3>Framework Status</h3>
+            <div id="framework-status">
+                <p>Loading EZUI Framework...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test framework loading
+        setTimeout(() => {
+            const status = document.getElementById('framework-status');
+            if (window.ezui) {
+                status.innerHTML = `
+                    <p>EZUI Framework loaded successfully!</p>
+                    <p>Components registered: ${window.ezui.registry ? window.ezui.registry.list().length : 0}</p>
+                    <p>Registry available: ${window.ezui.registry ? 'Yes' : 'No'}</p>
+                `;
+                
+                console.log('EZUI Framework:', window.ezui);
+                if (window.ezui.registry) {
+                    console.log('Registered components:', window.ezui.registry.list());
+                }
+            } else {
+                status.innerHTML = '<p>EZUI Framework failed to load</p>';
+            }
+        }, 1000);
+
+        // Test component creation
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, EZUI should initialize...');
+        });
+    </script>
+</body>
+</html>

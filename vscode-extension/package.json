@@ -1,0 +1,127 @@
+{
+  "name": "ezui-syntax",
+  "displayName": "EZUI Language Support",
+  "description": "Syntax highlighting and language support for EZUI framework files (.ezui)",
+  "version": "1.0.0",
+  "publisher": "ezui-team",
+  "icon": "images/ezui.png",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "ezui",
+    "framework",
+    "syntax",
+    "highlighting",
+    "web development",
+    "components"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:ezui"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "ezui",
+        "aliases": [
+          "EZUI",
+          "ezui"
+        ],
+        "extensions": [
+          ".ezui",
+          ".ezu"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./images/ezui.png",
+          "dark": "./images/ezui.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "ezui",
+        "scopeName": "source.ezui",
+        "path": "./syntaxes/ezui.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "EZUI Language Configuration",
+      "properties": {
+        "ezui.validate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable validation for EZUI files"
+        },
+        "ezui.format": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable formatting for EZUI files"
+        },
+        "ezui.autocomplete": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable autocomplete for EZUI syntax"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "ezui.compile",
+        "title": "Compile EZUI File",
+        "category": "EZUI"
+      },
+      {
+        "command": "ezui.preview",
+        "title": "Preview EZUI Component",
+        "category": "EZUI"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "ezui.compile",
+        "key": "ctrl+shift+e",
+        "mac": "cmd+shift+e",
+        "when": "resourceExtname == .ezui || resourceExtname == .ezu"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "ezui.compile",
+          "when": "resourceExtname == .ezui || resourceExtname == .ezu",
+          "group": "ezui"
+        },
+        {
+          "command": "ezui.preview",
+          "when": "resourceExtname == .ezui || resourceExtname == .ezu",
+          "group": "ezui"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "16.x",
+    "@types/vscode": "^1.74.0",
+    "@vscode/vsce": "^2.32.0",
+    "typescript": "^4.9.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ezui/vscode-extension.git"
+  },
+  "license": "MIT"
+}

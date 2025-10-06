@@ -1,0 +1,346 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "EZUI",
+  "scopeName": "source.ezui",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#component-declaration"
+    },
+    {
+      "include": "#state-block"
+    },
+    {
+      "include": "#style-block"
+    },
+    {
+      "include": "#template-block"
+    },
+    {
+      "include": "#script-block"
+    },
+    {
+      "include": "#interpolation"
+    },
+    {
+      "include": "#attributes"
+    },
+    {
+      "include": "#html-tags"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.ezui",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.ezui",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "component-declaration": {
+      "patterns": [
+        {
+          "name": "meta.component.ezui",
+          "begin": "(<)(component)\\s+([\\w.-]+)(>)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.ezui"
+            },
+            "2": {
+              "name": "entity.name.tag.component.ezui"
+            },
+            "3": {
+              "name": "entity.name.type.component.ezui"
+            },
+            "4": {
+              "name": "punctuation.definition.tag.end.ezui"
+            }
+          },
+          "end": "(</)?(component)(>)?",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.tag.begin.ezui"
+            },
+            "2": {
+              "name": "entity.name.tag.component.ezui"
+            },
+            "3": {
+              "name": "punctuation.definition.tag.end.ezui"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#state-block"
+            },
+            {
+              "include": "#style-block"
+            },
+            {
+              "include": "#template-block"
+            },
+            {
+              "include": "#script-block"
+            }
+          ]
+        }
+      ]
+    },
+    "state-block": {
+      "patterns": [
+        {
+          "name": "meta.state.ezui",
+          "begin": "\\b(state)\\s*(\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.state.ezui"
+            },
+            "2": {
+              "name": "punctuation.definition.block.begin.ezui"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.block.end.ezui"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#javascript-content"
+            }
+          ]
+        }
+      ]
+    },
+    "style-block": {
+      "patterns": [
+        {
+          "name": "meta.style.ezui",
+          "begin": "\\b(style)\\s*(\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.style.ezui"
+            },
+            "2": {
+              "name": "punctuation.definition.block.begin.ezui"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.block.end.ezui"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#css-content"
+            }
+          ]
+        }
+      ]
+    },
+    "template-block": {
+      "patterns": [
+        {
+          "name": "meta.template.ezui",
+          "begin": "\\b(template)\\s*(\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.template.ezui"
+            },
+            "2": {
+              "name": "punctuation.definition.block.begin.ezui"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.block.end.ezui"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#html-content"
+            },
+            {
+              "include": "#interpolation"
+            }
+          ]
+        }
+      ]
+    },
+    "script-block": {
+      "patterns": [
+        {
+          "name": "meta.script.ezui",
+          "begin": "\\b(script)\\s*(\\{)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.script.ezui"
+            },
+            "2": {
+              "name": "punctuation.definition.block.begin.ezui"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.block.end.ezui"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#javascript-content"
+            }
+          ]
+        }
+      ]
+    },
+    "interpolation": {
+      "patterns": [
+        {
+          "name": "meta.interpolation.ezui",
+          "begin": "\\{",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.interpolation.begin.ezui"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.interpolation.end.ezui"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#javascript-expression"
+            }
+          ]
+        }
+      ]
+    },
+    "attributes": {
+      "patterns": [
+        {
+          "name": "meta.attribute.ezui",
+          "match": "\\b([a-zA-Z-]+)\\s*(=)\\s*(\"[^\"]*\"|'[^']*'|[^\\s>]+)",
+          "captures": {
+            "1": {
+              "name": "entity.other.attribute-name.ezui"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.ezui"
+            },
+            "3": {
+              "name": "string.quoted.attribute-value.ezui"
+            }
+          }
+        }
+      ]
+    },
+    "html-tags": {
+      "patterns": [
+        {
+          "name": "meta.tag.html.ezui",
+          "begin": "<([a-zA-Z][a-zA-Z0-9-]*)",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.tag.begin.ezui"
+            },
+            "1": {
+              "name": "entity.name.tag.html.ezui"
+            }
+          },
+          "end": "(/?)>",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.tag.end.ezui"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#attributes"
+            }
+          ]
+        },
+        {
+          "name": "meta.tag.html.closing.ezui",
+          "match": "</([a-zA-Z][a-zA-Z0-9-]*)>",
+          "captures": {
+            "0": {
+              "name": "punctuation.definition.tag.ezui"
+            },
+            "1": {
+              "name": "entity.name.tag.html.ezui"
+            }
+          }
+        }
+      ]
+    },
+    "javascript-content": {
+      "patterns": [
+        {
+          "name": "source.js.embedded.ezui",
+          "begin": "(?<=\\{)",
+          "end": "(?=\\})",
+          "patterns": [
+            {
+              "include": "source.js"
+            }
+          ]
+        }
+      ]
+    },
+    "javascript-expression": {
+      "patterns": [
+        {
+          "name": "meta.embedded.expression.js.ezui",
+          "begin": "",
+          "end": "",
+          "patterns": [
+            {
+              "include": "source.js"
+            }
+          ]
+        }
+      ]
+    },
+    "css-content": {
+      "patterns": [
+        {
+          "name": "source.css.embedded.ezui",
+          "begin": "(?<=\\{)",
+          "end": "(?=\\})",
+          "patterns": [
+            {
+              "include": "source.css"
+            }
+          ]
+        }
+      ]
+    },
+    "html-content": {
+      "patterns": [
+        {
+          "include": "#html-tags"
+        },
+        {
+          "include": "#interpolation"
+        },
+        {
+          "name": "text.html.ezui",
+          "match": "[^<{]+"
+        }
+      ]
+    }
+  }
+}

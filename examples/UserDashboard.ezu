@@ -1,0 +1,721 @@
+<component UserDashboard.ezu>
+
+state {
+  user: {
+    id: null,
+    name: "",
+    email: "",
+    avatar: "",
+    role: "user",
+    permissions: [],
+    lastLogin: null,
+    isOnline: false
+  },
+  
+  notifications: [],
+  unreadCount: 0,
+  
+  dashboard: {
+    metrics: {
+      totalUsers: 0,
+      activeUsers: 0,
+      revenue: 0,
+      growth: 0
+    },
+    isLoading: false,
+    lastUpdate: null
+  },
+  
+  preferences: {
+    theme: "system",
+    language: "en",
+    timezone: "UTC",
+    notifications: {
+      email: true,
+      push: true,
+      sms: false
+    }
+  }
+}
+
+style {
+  .dashboard {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+    background: var(--bg-primary, #f8fafc);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  
+  .sidebar {
+    background: var(--sidebar-bg, #ffffff);
+    border-right: 1px solid var(--border-color, #e5e7eb);
+    padding: 24px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .user-profile {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    margin-bottom: 24px;
+  }
+  
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--accent-color, #3b82f6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  
+  .online-indicator {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 16px;
+    height: 16px;
+    background: var(--success-color, #10b981);
+    border: 3px solid white;
+    border-radius: 50%;
+  }
+  
+  .user-info h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+  }
+  
+  .user-info p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-secondary, #6b7280);
+  }
+  
+  .nav-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0 12px;
+  }
+  
+  .nav-item {
+    margin-bottom: 4px;
+  }
+  
+  .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--text-secondary, #6b7280);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .nav-link:hover,
+  .nav-link.active {
+    background: var(--accent-bg, #eff6ff);
+    color: var(--accent-color, #3b82f6);
+  }
+  
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+  }
+  
+  .main-content {
+    padding: 32px;
+    overflow-x: auto;
+  }
+  
+  .page-header {
+    margin-bottom: 32px;
+  }
+  
+  .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary, #111827);
+    margin: 0 0 8px;
+  }
+  
+  .page-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary, #6b7280);
+    margin: 0;
+  }
+  
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  
+  .metric-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .metric-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary, #6b7280);
+    margin-bottom: 8px;
+  }
+  
+  .metric-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary, #111827);
+    margin-bottom: 4px;
+  }
+  
+  .metric-growth {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .metric-growth.positive {
+    color: var(--success-color, #10b981);
+  }
+  
+  .metric-growth.negative {
+    color: var(--danger-color, #ef4444);
+  }
+  
+  .notifications-panel {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    overflow: hidden;
+  }
+  
+  .panel-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    background: var(--bg-secondary, #f9fafb);
+  }
+  
+  .panel-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+    margin: 0;
+  }
+  
+  .notification-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .notification-item {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    display: flex;
+    align-items: start;
+    gap: 12px;
+  }
+  
+  .notification-item:last-child {
+    border-bottom: none;
+  }
+  
+  .notification-item.unread {
+    background: var(--accent-bg, #eff6ff);
+  }
+  
+  .notification-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent-color, #3b82f6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  
+  .notification-content h4 {
+    margin: 0 0 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+  }
+  
+  .notification-content p {
+    margin: 0 0 4px;
+    font-size: 14px;
+    color: var(--text-secondary, #6b7280);
+    line-height: 1.4;
+  }
+  
+  .notification-time {
+    font-size: 12px;
+    color: var(--text-tertiary, #9ca3af);
+  }
+  
+  .loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color, #e5e7eb);
+    border-radius: 50%;
+    border-top-color: var(--accent-color, #3b82f6);
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-secondary, #6b7280);
+  }
+  
+  .empty-state-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    opacity: 0.5;
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard {
+      grid-template-columns: 1fr;
+    }
+    
+    .sidebar {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    
+    .main-content {
+      padding: 24px 16px;
+    }
+    
+    .metrics-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+template {
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="user-profile">
+        <div class="user-avatar">
+          {user.avatar ? 
+            '<img src="' + user.avatar + '" alt="' + user.name + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">' :
+            user.name.charAt(0).toUpperCase()
+          }
+          {user.isOnline ? '<div class="online-indicator"></div>' : ''}
+        </div>
+        <div class="user-info">
+          <h3>{user.name || 'Guest User'}</h3>
+          <p>{user.email}</p>
+          <p style="font-size: 12px; text-transform: capitalize;">{user.role}</p>
+        </div>
+      </div>
+      
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="#dashboard" class="nav-link active">
+              <span class="nav-icon">📊</span>
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#analytics" class="nav-link">
+              <span class="nav-icon">📈</span>
+              Analytics
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#users" class="nav-link">
+              <span class="nav-icon">👥</span>
+              Users
+              {dashboard.metrics.totalUsers > 0 ? '<span style="margin-left:auto;background:#3b82f6;color:white;padding:2px 8px;border-radius:12px;font-size:12px;">' + dashboard.metrics.totalUsers + '</span>' : ''}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#reports" class="nav-link">
+              <span class="nav-icon">📋</span>
+              Reports
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#settings" class="nav-link">
+              <span class="nav-icon">⚙️</span>
+              Settings
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="page-header">
+        <h1 class="page-title">Dashboard Overview</h1>
+        <p class="page-subtitle">
+          Welcome back, {user.name}. Here's what's happening with your business today.
+          {dashboard.lastUpdate ? 'Last updated: ' + formatDate(dashboard.lastUpdate) : ''}
+        </p>
+      </header>
+      
+      <!-- Metrics Grid -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Users</div>
+          <div class="metric-value">
+            {dashboard.isLoading ? '<span class="loading-spinner"></span>' : formatNumber(dashboard.metrics.totalUsers)}
+          </div>
+          <div class="metric-growth positive">↗ +12% from last month</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-label">Active Users</div>
+          <div class="metric-value">
+            {dashboard.isLoading ? '<span class="loading-spinner"></span>' : formatNumber(dashboard.metrics.activeUsers)}
+          </div>
+          <div class="metric-growth positive">↗ +8% from last month</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-label">Revenue</div>
+          <div class="metric-value">
+            {dashboard.isLoading ? '<span class="loading-spinner"></span>' : '$' + formatNumber(dashboard.metrics.revenue)}
+          </div>
+          <div class="metric-growth negative">↘ -3% from last month</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-label">Growth Rate</div>
+          <div class="metric-value">
+            {dashboard.isLoading ? '<span class="loading-spinner"></span>' : dashboard.metrics.growth + '%'}
+          </div>
+          <div class="metric-growth positive">↗ +2.1% from last month</div>
+        </div>
+      </section>
+      
+      <!-- Notifications Panel -->
+      <section class="notifications-panel">
+        <header class="panel-header">
+          <h2 class="panel-title">
+            Recent Notifications
+            {unreadCount > 0 ? '<span style="margin-left:12px;background:#ef4444;color:white;padding:4px 8px;border-radius:12px;font-size:12px;">' + unreadCount + '</span>' : ''}
+          </h2>
+        </header>
+        
+        <div class="notification-list">
+          {notifications.length === 0 ? 
+            '<div class="empty-state"><div class="empty-state-icon">🔔</div><p>No notifications yet</p></div>' :
+            notifications.map(notification => 
+              '<div class="notification-item' + (!notification.read ? ' unread' : '') + '">' +
+                '<div class="notification-icon">' + getNotificationIcon(notification.type) + '</div>' +
+                '<div class="notification-content">' +
+                  '<h4>' + notification.title + '</h4>' +
+                  '<p>' + notification.message + '</p>' +
+                  '<span class="notification-time">' + getTimeAgo(notification.createdAt) + '</span>' +
+                '</div>' +
+              '</div>'
+            ).join('')
+          }
+        </div>
+      </section>
+    </main>
+  </div>
+}
+
+script {
+  // Lifecycle hooks
+  onMount() {
+    this.loadUserData();
+    this.loadDashboardMetrics();
+    this.loadNotifications();
+    this.setupRealTimeUpdates();
+    
+    // Track user activity
+    this.trackUserActivity();
+  }
+  
+  onDestroy() {
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
+    if (this.websocket) {
+      this.websocket.close();
+    }
+  }
+  
+  // Data loading methods
+  async loadUserData() {
+    try {
+      const response = await fetch('/api/user/profile', {
+        headers: {
+          'Authorization': `Bearer ${this.getAuthToken()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) throw new Error('Failed to load user data');
+      
+      const userData = await response.json();
+      this.updateState('user', {
+        ...this.state.user,
+        ...userData,
+        isOnline: true
+      });
+      
+    } catch (error) {
+      console.error('Error loading user data:', error);
+      this.showNotification('error', 'Failed to load user profile');
+    }
+  }
+  
+  async loadDashboardMetrics() {
+    this.updateState('dashboard.isLoading', true);
+    
+    try {
+      const response = await fetch('/api/dashboard/metrics', {
+        headers: {
+          'Authorization': `Bearer ${this.getAuthToken()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) throw new Error('Failed to load metrics');
+      
+      const metrics = await response.json();
+      this.updateState('dashboard', {
+        ...this.state.dashboard,
+        metrics,
+        lastUpdate: new Date().toISOString(),
+        isLoading: false
+      });
+      
+    } catch (error) {
+      console.error('Error loading dashboard metrics:', error);
+      this.updateState('dashboard.isLoading', false);
+      this.showNotification('error', 'Failed to load dashboard metrics');
+    }
+  }
+  
+  async loadNotifications() {
+    try {
+      const response = await fetch('/api/notifications', {
+        headers: {
+          'Authorization': `Bearer ${this.getAuthToken()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) throw new Error('Failed to load notifications');
+      
+      const notifications = await response.json();
+      const unreadCount = notifications.filter(n => !n.read).length;
+      
+      this.updateState('notifications', notifications);
+      this.updateState('unreadCount', unreadCount);
+      
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+      this.showNotification('error', 'Failed to load notifications');
+    }
+  }
+  
+  // Real-time updates
+  setupRealTimeUpdates() {
+    // WebSocket connection for real-time updates
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${wsProtocol}//${window.location.host}/ws/dashboard`;
+    
+    this.websocket = new WebSocket(wsUrl);
+    
+    this.websocket.onopen = () => {
+      console.log('Dashboard WebSocket connected');
+      this.websocket.send(JSON.stringify({
+        type: 'authenticate',
+        token: this.getAuthToken()
+      }));
+    };
+    
+    this.websocket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        this.handleRealTimeUpdate(data);
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    };
+    
+    this.websocket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+    
+    this.websocket.onclose = () => {
+      console.log('Dashboard WebSocket disconnected');
+      // Attempt to reconnect after 5 seconds
+      setTimeout(() => this.setupRealTimeUpdates(), 5000);
+    };
+    
+    // Fallback: Poll for updates every 30 seconds
+    this.updateInterval = setInterval(() => {
+      this.loadDashboardMetrics();
+      this.loadNotifications();
+    }, 30000);
+  }
+  
+  handleRealTimeUpdate(data) {
+    switch (data.type) {
+      case 'metrics_update':
+        this.updateState('dashboard.metrics', data.metrics);
+        this.updateState('dashboard.lastUpdate', new Date().toISOString());
+        break;
+        
+      case 'new_notification':
+        const currentNotifications = [...this.state.notifications];
+        currentNotifications.unshift(data.notification);
+        this.updateState('notifications', currentNotifications.slice(0, 50)); // Keep only latest 50
+        this.updateState('unreadCount', this.state.unreadCount + 1);
+        
+        // Show browser notification if permitted
+        this.showBrowserNotification(data.notification);
+        break;
+        
+      case 'user_status_change':
+        if (data.userId === this.state.user.id) {
+          this.updateState('user.isOnline', data.isOnline);
+        }
+        break;
+    }
+  }
+  
+  // Utility methods
+  getAuthToken() {
+    return localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+  }
+  
+  formatNumber(num) {
+    if (!num) return '0';
+    
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'K';
+    }
+    
+    return num.toLocaleString();
+  }
+  
+  formatDate(dateString) {
+    if (!dateString) return 'Never';
+    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return date.toLocaleDateString();
+  }
+  
+  getTimeAgo(dateString) {
+    return this.formatDate(dateString);
+  }
+  
+  getNotificationIcon(type) {
+    const icons = {
+      info: 'ℹ️',
+      success: '✅',
+      warning: '⚠️',
+      error: '❌',
+      user: '👤',
+      system: '⚙️',
+      security: '🔒'
+    };
+    return icons[type] || '📢';
+  }
+  
+  showNotification(type, message) {
+    // Add to notifications list
+    const notification = {
+      id: Date.now(),
+      type,
+      title: type.charAt(0).toUpperCase() + type.slice(1),
+      message,
+      read: false,
+      createdAt: new Date().toISOString()
+    };
+    
+    const currentNotifications = [...this.state.notifications];
+    currentNotifications.unshift(notification);
+    this.updateState('notifications', currentNotifications.slice(0, 50));
+    this.updateState('unreadCount', this.state.unreadCount + 1);
+  }
+  
+  showBrowserNotification(notification) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(notification.title, {
+        body: notification.message,
+        icon: '/favicon.ico',
+        badge: '/favicon.ico'
+      });
+    }
+  }
+  
+  trackUserActivity() {
+    let lastActivity = Date.now();
+    
+    const updateActivity = () => {
+      lastActivity = Date.now();
+      this.updateState('user.isOnline', true);
+    };
+    
+    // Track user interactions
+    ['click', 'keypress', 'scroll', 'mousemove'].forEach(event => {
+      document.addEventListener(event, updateActivity, { passive: true });
+    });
+    
+    // Check for inactivity every minute
+    setInterval(() => {
+      const inactive = Date.now() - lastActivity > 300000; // 5 minutes
+      if (inactive && this.state.user.isOnline) {
+        this.updateState('user.isOnline', false);
+      }
+    }, 60000);
+  }
+}
+
+</component>

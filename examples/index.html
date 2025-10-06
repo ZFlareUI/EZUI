@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EZUI Framework Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .info-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .info-section h2 {
+            margin-top: 0;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .feature h3 {
+            margin-top: 0;
+            color: #ffeaa7;
+        }
+
+        code {
+            background: rgba(0,0,0,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .github-link {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .github-link:hover {
+            background: rgba(0,0,0,0.9);
+        }
+    </style>
+
+    <!-- Load EZUI Framework -->
+    <script type="module" src="src/ezui.js"></script>
+    
+    <!-- Load Components -->
+    <script type="text/ezu" src="examples/counter.ezu"></script>
+    <script type="text/ezu" src="examples/todo.ezu"></script>
+</head>
+<body>
+    <a href="#" class="github-link">GitHub</a>
+    
+    <div class="header">
+        <h1>EZUI Framework</h1>
+        <p>Lightweight, Reactive Components with Minimal Syntax</p>
+    </div>
+
+    <div class="info-section">
+        <h2>Features</h2>
+        <div class="features">
+            <div class="feature">
+                <h3>Component-Based</h3>
+                <p>Build UIs with reusable <code>.ezu</code> components</p>
+            </div>
+            <div class="feature">
+                <h3>Reactive</h3>
+                <p>Auto-updates when state changes</p>
+            </div>
+            <div class="feature">
+                <h3>Scoped Styles</h3>
+                <p>CSS that stays within components</p>
+            </div>
+            <div class="feature">
+                <h3>Minimal Setup</h3>
+                <p>No complex build process required</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-grid">
+        <div class="demo-card">
+            <div class="card-header">
+                Counter Component
+            </div>
+            <div class="card-content">
+                <ezui-counter></ezui-counter>
+            </div>
+        </div>
+
+        <div class="demo-card">
+            <div class="card-header">
+                Todo List Component
+            </div>
+            <div class="card-content">
+                <ezui-todolist></ezui-todolist>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo of programmatic component creation
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('EZUI Demo loaded!');
+            
+            // You can also create components programmatically
+            setTimeout(() => {
+                console.log('Components loaded:', window.ezui.registry.list());
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

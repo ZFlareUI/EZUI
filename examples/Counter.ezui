@@ -1,0 +1,69 @@
+<component Counter.ezui>
+
+state {
+  count: 0,
+  increment: function() {
+    this.count++;
+  },
+  decrement: function() {
+    this.count--;
+  }
+}
+
+style {
+  .counter {
+    text-align: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .count-display {
+    font-size: 2em;
+    font-weight: bold;
+    color: #333;
+    margin: 20px 0;
+  }
+  
+  .button {
+    background: #007acc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .button:hover {
+    background: #005a9e;
+  }
+}
+
+template {
+  <div class="counter">
+    <h1>EZUI Counter Component</h1>
+    <div class="count-display">{count}</div>
+    <div>
+      <button class="button" onclick="{decrement}">-</button>
+      <button class="button" onclick="{increment}">+</button>
+    </div>
+  </div>
+}
+
+script {
+  // Component lifecycle methods
+  onMount() {
+    console.log('Counter component mounted');
+  }
+  
+  onUpdate() {
+    console.log('Counter updated to:', this.count);
+  }
+  
+  onDestroy() {
+    console.log('Counter component destroyed');
+  }
+}
+
+</component>

@@ -1,0 +1,227 @@
+{
+  "name": "@ezui/framework",
+  "version": "2.0.0",
+  "description": "Enterprise-grade reactive web framework with advanced state management, security, performance optimization, and comprehensive development tools",
+  "main": "dist/ezui.min.js",
+  "module": "src/ezui.js",
+  "type": "module",
+  "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./src/ezui.js",
+      "require": "./dist/ezui.cjs"
+    },
+    "./runtime": {
+      "types": "./types/runtime.d.ts",
+      "import": "./src/runtime/index.js"
+    },
+    "./testing": {
+      "types": "./types/testing.d.ts",
+      "import": "./src/runtime/testing.js"
+    },
+    "./devtools": {
+      "types": "./types/devtools.d.ts",
+      "import": "./src/runtime/devtools.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "src/",
+    "types/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "SECURITY.md"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run build:dev && npm run build:prod && npm run build:types",
+    "build:dev": "rollup -c rollup.config.js --environment NODE_ENV:development",
+    "build:prod": "rollup -c rollup.config.js --environment NODE_ENV:production",
+    "build:types": "tsc --emitDeclarationOnly --outDir types",
+    "clean": "rimraf dist types coverage",
+    "dev": "rollup -c rollup.config.js --environment NODE_ENV:development --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "format": "prettier --write \"src/**/*.{js,json,md}\"",
+    "validate": "npm run lint && npm run test && npm run build",
+    "prepublishOnly": "npm run validate",
+    "serve": "http-server dist -p 3000 -c-1",
+    "docs": "jsdoc -c jsdoc.conf.json",
+    "analyze": "npm run build:prod && bundlesize",
+    "security:audit": "npm audit --audit-level moderate",
+    "security:fix": "npm audit fix",
+    "deps:check": "npm-check-updates",
+    "deps:update": "npm-check-updates -u && npm install"
+  },
+  "keywords": [
+    "framework",
+    "reactive",
+    "web",
+    "javascript",
+    "components",
+    "state-management",
+    "security",
+    "performance",
+    "development-tools"
+  ],
+  "author": {
+    "name": "EZUI Development Team",
+    "email": "team@ezui.dev",
+    "url": "https://ezui.dev/team"
+  },
+  "contributors": [
+    {
+      "name": "Core Team",
+      "email": "core@ezui.dev"
+    }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ezui-framework/core.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ezui-framework/core/issues"
+  },
+  "homepage": "https://ezui.dev",
+  "documentation": "https://docs.ezui.dev",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@rollup/plugin-babel": "^6.0.0",
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.3.1",
+    "@rollup/plugin-replace": "^5.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "babel-jest": "^29.7.0",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-jest": "^28.0.0",
+    "eslint-plugin-security": "^3.0.0",
+    "http-server": "^14.1.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jsdoc": "^4.0.0",
+    "prettier": "^3.6.2",
+    "rimraf": "^5.0.0",
+    "rollup": "^4.52.4",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "dompurify": "^3.2.7",
+    "validator": "^13.15.15"
+  },
+  "bundlesize": [
+    {
+      "path": "./dist/ezui.min.js",
+      "maxSize": "50 KB"
+    },
+    {
+      "path": "./dist/ezui.min.js.gz",
+      "maxSize": "15 KB"
+    }
+  ],
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/**/*.test.js",
+      "!src/**/*.spec.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 70,
+        "lines": 70,
+        "statements": 70
+      }
+    },
+    "testMatch": [
+      "<rootDir>/tests/**/*.test.js",
+      "<rootDir>/src/**/*.test.js"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    }
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "node": true,
+      "jest": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:security/recommended",
+      "prettier"
+    ],
+    "plugins": [
+      "security",
+      "jest"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-console": "warn",
+      "no-debugger": "error",
+      "no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_"
+        }
+      ],
+      "prefer-const": "error",
+      "no-var": "error",
+      "security/detect-object-injection": "off"
+    },
+    "overrides": [
+      {
+        "files": [
+          "**/*.test.js",
+          "**/*.spec.js"
+        ],
+        "rules": {
+          "no-console": "off"
+        }
+      }
+    ]
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "printWidth": 100,
+    "tabWidth": 2,
+    "useTabs": false
+  },
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/ezui"
+  },
+  "volta": {
+    "node": "18.16.0",
+    "npm": "9.5.0"
+  }
+}
